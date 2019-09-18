@@ -54,7 +54,7 @@ class Veiculo:
         self._modelo = valor
 
     @ano.setter
-    def ano(self,valor):
+    def ano(self, valor):
         self._ano = valor
 
     @motor.setter
