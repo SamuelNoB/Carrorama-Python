@@ -1,8 +1,7 @@
 import sys
-sys.path.insert(0, "./Combustivel")
-#from Combustivel import Combustiveis
+#sys.path.append("./Combustivel")
 
-class Veiculo:
+class Veiculo():
     def __init__(self, marca="", modelo="", ano=0, motor=0.0, combustiveis =[],cor="",placa="",renavan=""):
         self._marca = marca
         self._modelo = modelo
