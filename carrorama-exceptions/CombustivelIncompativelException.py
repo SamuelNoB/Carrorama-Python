@@ -1,0 +1,2 @@
+class CombustivelIncompativel(Exception):
+    pass

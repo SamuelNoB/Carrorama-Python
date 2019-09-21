@@ -1,0 +1,2 @@
+class DescricaoEmBranco(Exception):
+    pass
