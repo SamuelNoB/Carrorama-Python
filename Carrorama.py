@@ -1,26 +1,14 @@
-"""import sys
+from tkinter import *
+class Application(Frame):
+     def __init__(self, master=None):
+         Frame.__init__(self, master)
+         self.msg = Label(self, text="Hello World")
+         self.msg.pack ()
+         self.bye = Button (self, text="Bye", command=self.quit)
+         self.bye.pack ()
+         self.pack()
 
-sys.path.insert(0, "./Combustivel")
-sys.path.insert(1, "./Veiculo")
-from Combustivel import Combustiveis
-from Veiculo import Veiculo
-
-carro = Veiculo()
-
-carro.marca = "FIAT"
-carro.modelo = "uno"
-carro.combustiveis = Combustiveis.Gasolina
-carro.motor = 2.0
-carro.placa = "JFD-1982"
-carro.ano = 1999
-carro.cor = "Azul"
-
-print(carro.ano)
-print(carro.combustiveis[0])"""
-
-from Veiculo import Veiculo
-from Combustivel import Combustiveis
-carro = Veiculo()
-
-carro.combustiveis = (Combustiveis.Gasolina, Combustiveis.Diesel)
-print(carro.combustiveis)
+app = Application()
+app.master.title("Carrorama")
+app.master.geometry("300x60")
+mainloop()
