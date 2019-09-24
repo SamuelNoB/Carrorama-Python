@@ -14,7 +14,13 @@ carro.motor = 2.0
 carro.placa = "JFD-1982"
 carro.ano = 1999
 carro.cor = "Azul"
-carro.renavam = "1234.54332-0"
 
 print(carro.ano)
 print(carro.combustiveis[0])"""
+
+from Veiculo import Veiculo
+from Combustivel import Combustiveis
+carro = Veiculo()
+
+carro.combustiveis = (Combustiveis.Gasolina, Combustiveis.Diesel)
+print(carro.combustiveis)

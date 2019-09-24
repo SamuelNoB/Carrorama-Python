@@ -1,10 +1,10 @@
-from Despesa import Despesa
+from .Despesa import Despesa
+
 
 class Manutencao(Despesa):
     def __init__(self, quilometragem=0):
         super().__init__()
         self.quilometragem = quilometragem
-
 
     @property
     def quilometragem(self):
