@@ -8,15 +8,18 @@ from Despesa import Despesa
 class Veiculo:
 
     def __init__(self, marca="", modelo="", ano=0, motor=0.0, combustiveis=(), cor="", placa="", renavam=""):
-        self._marca = marca
-        self._modelo = modelo
-        self._ano = ano
-        self._motor = motor
-        self._combustiveis = combustiveis
-        self._cor = cor
-        self._placa = placa
-        self._renavam = renavam
-        self._despesas = []
+        try:
+            self._marca = marca
+            self._modelo = modelo
+            self._ano = ano
+            self._motor = motor
+            self._combustiveis = combustiveis
+            self._cor = cor
+            self._placa = placa
+            self._renavam = renavam
+            self.despesas = []
+        except(DescricaoEmBrancoException or ValorInvalidoException) as e:
+            raise e
 
     @property
     def marca(self):
@@ -121,5 +124,5 @@ class Veiculo:
         elif valor[0] is not None and valor[1] is not None:
             self._combustiveis = (valor[0], valor[1])
 
-    def toString(self):
-        return self.modelo + ' - ' + self.marca + ' - ' + str(self.ano)
+    def __str__(self):
+        return self.marca + ' ' + self.modelo + ' ' + self.cor + ' ' + str(self.ano) + ' - ' + self.placa
