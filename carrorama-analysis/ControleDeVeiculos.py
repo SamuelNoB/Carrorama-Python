@@ -6,13 +6,12 @@ from DescricaoEmBrancoException import DescricaoEmBrancoException
 from ValorInvalidoException import ValorInvalidoException
 
 
-
 class ControleDeVeiculos:
 
     def __init__(self, veiculos=[]):
         self.veiculos = veiculos
 
-    def RegistraVeiculo(self): #objeto do tipo Veiculo
+    def registra_veiculo(self): #objeto do tipo Veiculo
         try:
             veiculo = Veiculo()
             veiculo.marca = input("Digite a marca do veículo: ")
@@ -45,18 +44,34 @@ class ControleDeVeiculos:
             raise e
 
         self.veiculos.append(veiculo)
-        print("sucesso\ninformações do veiculo registrado: ")
+        print("sucesso\ninformações do veiculo registrado. ")
         print(veiculo)
 
-    def RegistrarDespesa(self):
-        print("Escolha o carro para o qual deseja adicionar a despesa")
+    def registra_despesa(self):
+        print("Escolha o carro para o qual deseja adicionar a despesa\n")
         for i, carro in enumerate(self.veiculos):
-            print(str(i+1) + carro)
+            print(str(i+1), end=" - ")
+            print(carro)
         valor = int(input()) - 1
 
+        if valor > len(self.veiculos):
+            raise ValorInvalidoException("Indice")
 
-    def GerarRelatorioSimples(self):
-        relatorio = []
+        despesa = Despesa()
+        try:
+            despesa.nome = input("digite o nome da despesa: ")
+            despesa.categoria = TipoDeDespesa(int(input("digite o numero dacategoria de despesa que deseja adicionar\n"
+                                                        "(1) Imposto\n(2) Seguro\n(3) Manutenção\n(4) Financiamento\n"
+                                                        "(5) Multas\n (6) Abastecimento\n")))
+            despesa.valor = input("digite o valor da despesa: ")
+        except(DescricaoEmBrancoException or ValorInvalidoException) as e:
+            raise e
+
+        self.veiculos[valor].despesas.append(despesa)
+        print(despesa)
+
+    def gerar_relatorio_simples(self):
+        relatorio = list
         relatorio.append("Relatório simples\n")
         for veiculo in self.veiculos:
             relatorio.append(veiculo.__str__()+ "\n")

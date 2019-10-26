@@ -5,31 +5,31 @@ from ValorInvalidoException import ValorInvalidoException
 
 
 class Despesa:
-    def __init__(self, nome="", data=date, categoria=TipoDeDespesa, valor=0.0):
+    def __init__(self, data=date, categoria=TipoDeDespesa, valor=0.0):
         self.data = data
         self._categoria = categoria
-        try:
-            self._nome = nome
-            self._valor = valor
-        except (DescricaoEmBrancoException or ValorInvalidoException) as e:
-            raise e
-
-    @property
-    def nome(self):
-        return self._nome
+        self._valor = valor
 
     @property
     def valor(self):
         return self._valor
 
-    @nome.setter
-    def nome(self, valor):
-        if valor is None:
-            raise DescricaoEmBrancoException("Nome")
-        self._nome = valor
+    @property
+    def categoria(self):
+        return self._categoria
 
     @valor.setter
     def valor(self, valor):
+        if valor is "":
+            raise DescricaoEmBrancoException("Valor da despesa")
+        valor = float(valor)
         if valor <= 0:
             raise ValorInvalidoException("Valor da Despesa")
         self._valor = valor
+
+    @categoria.setter
+    def categoria(self, valor):
+        self._categoria = valor
+
+    def __str__(self):
+        return self.categoria.name + ' no valor de: R$ ' + str(self.valor) + ' data: ' + str(self.data.today())

@@ -2,9 +2,9 @@ from enum import Enum
 
 
 class TipoDeDespesa(Enum):
-    Imposto = "Imposto"
-    Seguro = "Seguro"
-    Manutencao = "Manutenção"
-    Financiamento = "Financiamento"
-    Multas = "Multas"
-    Abastecimento = "Abastecimento"
+    Imposto = 1
+    Seguro = 2
+    Manutenção = 3
+    Financiamento = 4
+    Multas = 5
+    Abastecimento = 6

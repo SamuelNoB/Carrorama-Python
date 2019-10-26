@@ -1,7 +1,6 @@
 import ControleDeVeiculos as CV
-veiculos=[]
+veiculos = []
 controle = CV.ControleDeVeiculos(veiculos)
 
-controle.RegistraVeiculo()
-controle.RegistraVeiculo()
-controle.RegistrarDespesa()
+controle.registra_veiculo()
+controle.registra_despesa()
