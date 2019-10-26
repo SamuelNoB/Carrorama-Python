@@ -3,4 +3,4 @@ class DescricaoEmBrancoException(Exception):
         self.NomeDoCampo = NomeDoCampo
 
     def __str__(self):
-        return "o campo" + self.NomeDoCampo + "está vázio"
+        return "O campo " + self.NomeDoCampo + " está vázio"

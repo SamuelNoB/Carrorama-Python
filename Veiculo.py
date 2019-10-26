@@ -7,8 +7,8 @@ from Despesa import Despesa
 
 class Veiculo:
 
-    def __init__(self, marca="", modelo="", ano=0, motor=0.0, combustiveis=(), cor="", placa="", renavam=""):
-        try:
+    def __init__(self, marca="", modelo="", ano="", motor="", combustiveis=(), cor="", placa="", renavam=""):
+
             self._marca = marca
             self._modelo = modelo
             self._ano = ano
@@ -18,8 +18,7 @@ class Veiculo:
             self._placa = placa
             self._renavam = renavam
             self.despesas = []
-        except(DescricaoEmBrancoException or ValorInvalidoException) as e:
-            raise e
+
 
     @property
     def marca(self):
@@ -55,27 +54,34 @@ class Veiculo:
 
     @marca.setter
     def marca(self, valor):
-        if valor is None:
-            DescricaoEmBrancoException("Marca")
+        if valor is "":
+            raise DescricaoEmBrancoException("Marca")
         else:
             self._marca = valor
 
     @modelo.setter
     def modelo(self, valor):
-        if valor is None:
-            raise DescricaoEmBrancoException("Nome")
-
-        self._modelo = valor
+        if valor is "":
+            raise DescricaoEmBrancoException("Modelo")
+        else:
+            self._modelo = valor
 
     @ano.setter
     def ano(self, valor):
+        if valor is "":
+            raise DescricaoEmBrancoException("Ano")
+
+        valor = int(valor)
         if valor < 1900:
             raise ValorInvalidoException("Ano")
         self._ano = valor
 
     @motor.setter
     def motor(self, valor):
-        if valor < 0:
+        if valor is "":
+            raise DescricaoEmBrancoException("Motor")
+        valor = float(valor)
+        if valor < 1.0:
             raise ValorInvalidoException("Motor")
         self._motor = valor
 
@@ -97,20 +103,20 @@ class Veiculo:
         somadigitos = 0
         multiplicador = 3
         if not re.match(r'([0-9]{4}[.][0-9]{6}-[0-9])', valor):
-            print("nao combinou")
             raise ValorInvalidoException("Renavam")
         else:
-            print("combinou")
-            for i in range(len(valor)-1):
+            for i in range(len(valor)-2):
+                if valor[i] != ".":
+                    somadigitos += (int(valor[i]) * multiplicador)
+                    if multiplicador == 2:
+                        multiplicador = 10
+                    multiplicador -= 1
 
-                somadigitos += (int(valor[i]) * multiplicador)
-                if multiplicador == 2:
-                    multiplicador = 10
-                multiplicador -= 1
             somadigitos = (somadigitos * 10) % 11
             if somadigitos == 10:
                 somadigitos = 0
-            if somadigitos == int(valor[10]):
+
+            if somadigitos == int(valor[12]):
                 self._renavam = valor
             else:
                 raise ValorInvalidoException("Renavam")
@@ -118,10 +124,10 @@ class Veiculo:
     @combustiveis.setter
     def combustiveis(self, valor):
         if valor[0] is None and valor[1] is None:
-            raise DescricaoEmBrancoException("Combustíveis")
+            raise DescricaoEmBrancoException("Combustiveis")
         if valor[0] is not None and valor[1] is None:
             self._combustiveis = (valor[0])
-        elif valor[0] is not None and valor[1] is not None:
+        elif valor[0] and valor[1] is not None:
             self._combustiveis = (valor[0], valor[1])
 
     def __str__(self):

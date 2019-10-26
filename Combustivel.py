@@ -3,7 +3,7 @@ from enum import Enum
 
 class Combustiveis(Enum):
 
-    Gasolina="Gasolina"
-    Alccol="Álccol"
-    Diesel="Díesel"
+    Gasolina= 0
+    Alccol= 1
+    Diesel= 2
 

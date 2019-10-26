@@ -1,6 +1,9 @@
 from Veiculo import Veiculo
 from Despesa import Despesa
+from Combustivel import Combustiveis
 from TipoDeDespesa import TipoDeDespesa
+from DescricaoEmBrancoException import DescricaoEmBrancoException
+from ValorInvalidoException import ValorInvalidoException
 
 
 
@@ -9,12 +12,48 @@ class ControleDeVeiculos:
     def __init__(self, veiculos=[]):
         self.veiculos = veiculos
 
-    def RegistraVeiculo(self, veiculo): #objeto do tipo Veiculo
-        self.veiculos.append(veiculo)
-        print("sucesso")
+    def RegistraVeiculo(self): #objeto do tipo Veiculo
+        try:
+            veiculo = Veiculo()
+            veiculo.marca = input("Digite a marca do veículo: ")
+            veiculo.modelo = input("Digite o modelo: ")
+            veiculo.cor = input("Qual a cor do veículo? ")
+            veiculo.motor = input("qual o motor do Veiculo?\n EX: 1.0, 2.0\n")
 
-    def RegistrarDespesa(self, veiculo, despesa):
-        veiculo.despesas.append(despesa)
+            valor = int(input("qual seu tipo de carro?\n(1) para comum\n(2) para FLEX\n"))
+            if valor == 1:
+                valor = int(input("escolha o tipo de combustivel de seu carro\n(1) para "+ Combustiveis.Gasolina.name +
+                                "\n(2) para" + Combustiveis.Alccol.name + "\n(3) para"+ Combustiveis.Diesel.name+"\n"))
+                veiculo.combustiveis = [Combustiveis(valor), None]
+            elif valor == 2:
+                flex=[]
+                combs = int(input("escolha o primeiro tipo de combustivel de seu carro\n(1) para "+ Combustiveis.Gasolina.name +
+                                    "\n(2) para" + Combustiveis.Alccol.name + "\n(3) para"+ Combustiveis.Diesel.name))
+                flex.append(combs)
+                combs = int(input(
+                    "escolha o primeiro tipo de combustivel de seu carro\n(1) para " + Combustiveis.Gasolina.name +
+                    "\n(2) para" + Combustiveis.Alccol.name + "\n(3) para" + Combustiveis.Diesel.name))
+                flex.append(combs)
+                flex[0] = Combustiveis(flex[0])
+                flex[1] = Combustiveis(flex[1])
+                veiculo.combustiveis = flex
+
+            veiculo.ano = input("Digite o ano de fabricação do veículo: ")
+            veiculo.renavam = input("Digite o renavam do veiculo seguindo o seguinte modelo.\nEX: 1234.123456-9\n")
+            veiculo.placa = input("Digite a placa no deguinte modelo.\n EX: JKD-1987")
+        except(DescricaoEmBrancoException or ValorInvalidoException) as e:
+            raise e
+
+        self.veiculos.append(veiculo)
+        print("sucesso\ninformações do veiculo registrado: ")
+        print(veiculo)
+
+    def RegistrarDespesa(self):
+        print("Escolha o carro para o qual deseja adicionar a despesa")
+        for i, carro in enumerate(self.veiculos):
+            print(str(i+1) + carro)
+        valor = int(input()) - 1
+
 
     def GerarRelatorioSimples(self):
         relatorio = []
@@ -27,9 +66,7 @@ class ControleDeVeiculos:
 
         return ''.join(relatorio)
 
-
 #implementar os outros tipos de relatorios
-
 """
 #codigo de testes
 controle = ControleDeVeiculos()
