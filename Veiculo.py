@@ -7,7 +7,7 @@ from Despesa import Despesa
 
 class Veiculo:
 
-    def __init__(self, marca="", modelo="", ano="", motor="", combustiveis=(), cor="", placa="", renavam=""):
+    def __init__(self, marca="", modelo="", ano="", motor="", combustiveis=[], cor="", placa="", renavam=""):
 
             self._marca = marca
             self._modelo = modelo
@@ -123,12 +123,13 @@ class Veiculo:
 
     @combustiveis.setter
     def combustiveis(self, valor):
-        if valor[0] is None and valor[1] is None:
+        if valor is None:
             raise DescricaoEmBrancoException("Combustiveis")
-        if valor[0] is not None and valor[1] is None:
-            self._combustiveis = (valor[0])
-        elif valor[0] and valor[1] is not None:
-            self._combustiveis = (valor[0], valor[1])
+        for comb in valor:
+            if comb < 0 or comb > 2:
+                raise ValorInvalidoException("Combustiveis")
+            else:
+                self._combustiveis.append(Combustiveis(comb))
 
     def __str__(self):
         return self.marca + ' ' + self.modelo + ' ' + self.cor + ' ' + str(self.ano) + ' - ' + self.placa

@@ -6,7 +6,7 @@ from ValorInvalidoException import ValorInvalidoException
 
 class Despesa:
     def __init__(self, data=date, categoria=TipoDeDespesa, valor=0.0):
-        self.data = data
+        self.data = data.today()
         self._categoria = categoria
         self._valor = valor
 
@@ -32,4 +32,4 @@ class Despesa:
         self._categoria = valor
 
     def __str__(self):
-        return self.categoria.name + ' no valor de: R$ ' + str(self.valor) + ' data: ' + str(self.data.today())
+        return self.categoria.name + '\nValor: R$ ' + str(self.valor) + '\nData: ' + str(self.data) + "\n\n"
