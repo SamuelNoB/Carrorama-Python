@@ -19,13 +19,14 @@ class Despesa:
         return self._categoria
 
     @valor.setter
-    def valor(self, valor):
-        if valor is "":
-            raise DescricaoEmBrancoException("Valor da despesa")
-        valor = float(valor)
-        if valor <= 0:
-            raise ValorInvalidoException("Valor da Despesa")
-        self._valor = valor
+    def valor(self, val):
+        if val =='':
+            raise DescricaoEmBrancoException("Valor")
+
+        val = float(val)
+        if val <= 0:
+            raise ValorInvalidoException("Valor")
+        self._valor = val
 
     @categoria.setter
     def categoria(self, valor):

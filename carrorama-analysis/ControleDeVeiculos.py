@@ -5,7 +5,7 @@ from Combustivel import Combustiveis
 from TipoDeDespesa import TipoDeDespesa
 from DescricaoEmBrancoException import DescricaoEmBrancoException
 from ValorInvalidoException import ValorInvalidoException
-import Abastecimento
+from Abastecimento import Abastecimento
 import time
 
 
@@ -14,6 +14,7 @@ class ControleDeVeiculos:
     def __init__(self, veiculos=[]):
         self.veiculos = veiculos
 
+# -------------Registra veiculos----------------------------------------
     def registra_veiculo(self): # objeto do tipo Veiculo
         while True:
             try:
@@ -27,17 +28,19 @@ class ControleDeVeiculos:
                 if valor == 1:
                     valor = int(input("escolha o tipo de combustivel de seu carro\n(1) para "+ Combustiveis.Gasolina.name +
                                       "\n(2) para" + Combustiveis.Alccol.name + "\n(3) para"+ Combustiveis.Diesel.name+"\n"))
-                    veiculo.combustiveis = [valor-1]
+                    veiculo.combustiveis.append(valor)
                 elif valor == 2:
-                    flex=[]
-                    combs = int(input("escolha o primeiro tipo de combustivel de seu carro\n(1) para "+ Combustiveis.Gasolina.name +
-                                        "\n(2) para" + Combustiveis.Alccol.name + "\n(3) para"+ Combustiveis.Diesel.name))
-                    flex.append(combs)
+
+                    combs = int(input("Escolha o primeiro tipo de combustivel de seu carro\n(1) para "+ Combustiveis.Gasolina.name +
+                                        "\n(2) para" + Combustiveis.Alccol.name + "\n(3) para"+ Combustiveis.Diesel.name + "\n"))
+                    veiculo.combustiveis.append(combs)
+
                     combs = int(input(
-                        "escolha o primeiro tipo de combustivel de seu carro\n(1) para " + Combustiveis.Gasolina.name +
-                        "\n(2) para" + Combustiveis.Alccol.name + "\n(3) para" + Combustiveis.Diesel.name))
-                    flex.append(combs)
-                    veiculo.combustiveis = flex
+                        "Escolha o segundo tipo de combustivel de seu carro\n(1) para " + Combustiveis.Gasolina.name +
+                        "\n(2) para" + Combustiveis.Alccol.name + "\n(3) para" + Combustiveis.Diesel.name +"\n"))
+                    veiculo.combustiveis.append(combs)
+
+                    print(veiculo.combustiveis[0], veiculo.combustiveis[1])
 
                 veiculo.ano = input("Digite o ano de fabricação do veículo: ")
                 veiculo.renavam = input("Digite o renavam do veiculo seguindo o seguinte modelo.\nEX: 1234.123456-9\n")
@@ -48,11 +51,13 @@ class ControleDeVeiculos:
 
         self.veiculos.append(veiculo)
         print("sucesso\ninformações do veiculo registrado. ")
-        print(veiculo)
+        print(veiculo, "\n")
+
+# ----------------Registrar despesas-------------------------------------
 
     def registra_despesa(self):
-        if enumerate(self.veiculos) == 0:
-            print("Não há carros cadastrados para se vincular uma despesa a ele, por favor cadastre um carro primeiro\n"
+        if len(self.veiculos) == 0:
+            print("Não há carros cadastrados para se vincular uma despesa a ele, por favor cadastre um carro primeiro.\n"
                   "voltando ao menu principal\n")
             time.sleep(3)
             return
@@ -69,42 +74,59 @@ class ControleDeVeiculos:
         while True:
             try:
 
-                categoria = int(input("digite o numero dacategoria de despesa que deseja adicionar\n"
-                                                            "(1) Imposto\n(2) Seguro\n(3) Manutenção\n(4) Financiamento\n"
-                                                            "(5) Multas\n(6) Abastecimento\n"))
+                categoria = int(input("digite o numero dacategoria de despesa que deseja adicionar\n(1) Imposto\n(2) Seguro\n(3) Manutenção\n"
+                                      "(4) Financiamento\n(5) Multas\n(6) Abastecimento\n"))
+                if categoria < 1 or categoria > 6:
+                    raise ValorInvalidoException("categoria")
 
-                valor_despesa = float(input("digite o valor da despesa: "))
+                valor_despesa = input("digite o valor da despesa: ")
+                if valor_despesa == '':
+                    raise DescricaoEmBrancoException("valor da despesa")
+                elif float(valor_despesa) < 0:
+                    raise ValorInvalidoException("valor da despesa")
+
+                valor_despesa = float(valor_despesa)
 
                 if categoria == 6:
 
-                    abastecimento = Abastecimento.Abastecimento()
+                    abastecimento = Abastecimento()
                     abastecimento.categoria = 6
                     abastecimento.valor = valor_despesa
 
-                    if len(self.veiculos[carro_escolhido].combustiveis) == 2:
+                    if len(self.veiculos[carro_escolhido].combustiveis) > 1:
                         print("Coloque o numero do combustivel usado no abastecimento.\n(1) " +
                               self.veiculos[carro_escolhido].combustiveis[0].name + "\n(2) " + self.veiculos[carro_escolhido].combustiveis[1].name)
-                        Comb_abastecido = int(input())-1
+                        Comb_abastecido = input()
 
+                        if Comb_abastecido == '':
+                            raise DescricaoEmBrancoException("Combustivel abastecido")
+                        elif int(Comb_abastecido) > 2 or int(Comb_abastecido) < 1:
+                            raise ValorInvalidoException("Combustivel abastecido")
+
+                        Comb_abastecido = int(Comb_abastecido) - 1
                         abastecimento.combustivel = self.veiculos[carro_escolhido].combustiveis[Comb_abastecido]
                     else:
                         abastecimento.combustivel = self.veiculos[carro_escolhido].combustiveis[0].value
 
                     print(abastecimento.combustivel)
 
-                    abastecimento.ValorDoLitro = float(input("Digite o valor do litro na hora do abastecimento: "))
+                    abastecimento.ValorDoLitro = input("Digite o valor do litro na hora do abastecimento: ")
 
-                    quilometragem_inicial = int(input("Digite a quilometragem antes do abastecimento: "))
+                    quilometragem_inicial = input("Digite a quilometragem antes do abastecimento: ")
                     abastecimento.QuilometragemInicial = quilometragem_inicial
 
-                    tanque = int(input("informe se o abastecimento foi de tanque cheio ou não\n(1)Tanque cheio\n(2)normal\n"))-1
+                    tanque = input("informe se o abastecimento foi de tanque cheio ou não\n(1)Tanque cheio\n(2)normal\n")
+                    if tanque == '':
+                        raise DescricaoEmBrancoException("Tanque")
+                    elif int(tanque) < 1 or int(tanque) > 2:
+                        raise ValorInvalidoException("Tanque")
+
+                    tanque = int(tanque)-1
 
                     if tanque == 0:
                         abastecimento.IsTanqueCheio = False
                     elif tanque == 1:
                         abastecimento.IsTanqueCheio = True
-                    else:
-                        raise ValorInvalidoException
 
                     self.veiculos[carro_escolhido].despesas.append(abastecimento)
                     print(abastecimento)
@@ -113,7 +135,9 @@ class ControleDeVeiculos:
 
                     manutencao = Manutencao()
                     manutencao.valor = valor_despesa
-                    manutencao.quilometragem = int(input("Digite a quilometragem antes da manutenção: "))
+                    manutencao.quilometragem = input("Digite a quilometragem antes da manutenção: ")
+
+
                     self.veiculos[carro_escolhido].despesas.append(manutencao)
                     print(manutencao)
 
@@ -125,18 +149,24 @@ class ControleDeVeiculos:
                     self.veiculos[carro_escolhido].despesas.append(despesa)
                     print(despesa)
                 break
-            except(DescricaoEmBrancoException or ValorInvalidoException):
-                print("algum dos campos foi digitado erroneamente, por favor refaça o cadastro.")
+            except(DescricaoEmBrancoException, ValorInvalidoException, ValueError):
+                print("Algum dos campos foi digitado erroneamente, por favor refaça o cadastro apertando ENTER, ou qualquer outra letra.")
+                print("Caso não queira digite 'n'.")
+                escolha = input()
+                if escolha == 'n': break
+                elif escolha == '' or escolha != 'n': pass
+
+
+# ------------------------------------funções para gerar relatorios---------------------------------------------------
 
     def gerar_relatorio_simples(self):
+
         relatorio=[]
         relatorio.append("Relatório simples\n")
         for veiculo in self.veiculos:
             relatorio.append(veiculo.__str__() + "\n")
-#            print(veiculo)
             for despesa in veiculo.despesas:
                 relatorio.append('\t' + despesa.__str__() + "\n")
- #               print(despesa)
 
         return ''.join(relatorio)
 

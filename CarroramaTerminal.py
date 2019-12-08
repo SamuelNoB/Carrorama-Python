@@ -15,22 +15,32 @@ carro.cor = "Azul"
 carro.renavam = "2586.870488-7"
 carro.motor = 1.0
 carro.combustiveis = [0,1]
-controle = CV.ControleDeVeiculos(veiculos=[carro])
+carro2 = Veiculo()
+carro2.marca = "chevrolet"
+carro2.modelo = "cobalt"
+carro2.placa = "JKD-1923"
+carro2.ano = 2014
+carro2.cor = "prata"
+carro2.renavam = "4914.315127-7"
+carro2.motor = 2.0
+carro2.combustiveis = [0]
+
+controle = CV.ControleDeVeiculos(veiculos=[carro, carro2])
 
 print("Bem vindo ao controle de carros via terminal.")
 time.sleep(1.5)
-#clear()
+
 
 while 1:
     escolha = int(input("Digite o numero da opção que deseja acessar\n1) Cadastrar veiculo\n2) Cadastrar despesa\n3) Gerar relatorios\n4) Sair\n"))
     if escolha == 1: controle.registra_veiculo()
     elif escolha== 2: controle.registra_despesa()
     elif escolha == 3:
-        tipo_despesa = int(input("Digite o numero da opçao que deseja acessar\n1) Gerar relatorio simples\n"
+        tipo_relatorio = int(input("Digite o numero da opçao que deseja acessar\n1) Gerar relatorio simples\n"
                                  "2) Gerar relatorio de consumo\n3) Gerar relatorio de custo"))
-        if tipo_despesa == 1: print("\n" + controle.gerar_relatorio_simples())
-        elif tipo_despesa ==2: print(controle.gerar_relatorio_consumo())
-        elif tipo_despesa == 3: print(controle.gerar_relatorio_consumo())
+        if tipo_relatorio == 1: print("\n" + controle.gerar_relatorio_simples())
+        elif tipo_relatorio ==2: print(controle.gerar_relatorio_consumo())
+        elif tipo_relatorio == 3: print(controle.gerar_relatorio_consumo())
         else:
             input("Por favor escolha uma opção válida\n digite qualquer tecla para voltar ao inicio\n")
     elif escolha == 4: break

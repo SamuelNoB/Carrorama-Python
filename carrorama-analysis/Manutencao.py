@@ -2,6 +2,7 @@ from Despesa import Despesa
 from TipoDeDespesa import TipoDeDespesa
 from datetime import date
 from ValorInvalidoException import ValorInvalidoException
+from DescricaoEmBrancoException import DescricaoEmBrancoException
 
 
 class Manutencao(Despesa):
@@ -15,6 +16,12 @@ class Manutencao(Despesa):
 
     @quilometragem.setter
     def quilometragem(self, valor):
+
+        if valor == '':
+            raise DescricaoEmBrancoException("Quilometragem")
+
+        valor = int(valor)
+
         if valor < 0:
             raise ValorInvalidoException("Quilometragem")
         self._quilometragem = valor
