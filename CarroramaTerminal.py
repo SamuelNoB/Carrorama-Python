@@ -5,7 +5,7 @@ import time
 import os
 
 # TODO criar um banco de dados
-
+"""
 carro = Veiculo()
 carro.marca = "FIAT"
 carro.modelo = "UNO"
@@ -14,7 +14,7 @@ carro.ano = 2018
 carro.cor = "Azul"
 carro.renavam = "2586.870488-7"
 carro.motor = 1.0
-carro.combustiveis = [0,1]
+carro.combustiveis = [1,2]
 carro2 = Veiculo()
 carro2.marca = "chevrolet"
 carro2.modelo = "cobalt"
@@ -23,9 +23,9 @@ carro2.ano = 2014
 carro2.cor = "prata"
 carro2.renavam = "4914.315127-7"
 carro2.motor = 2.0
-carro2.combustiveis = [0]
-
-controle = CV.ControleDeVeiculos(veiculos=[carro, carro2])
+carro2.combustiveis = [1]
+"""
+controle = CV.ControleDeVeiculos()
 
 print("Bem vindo ao controle de carros via terminal.")
 time.sleep(1.5)
