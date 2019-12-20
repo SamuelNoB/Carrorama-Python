@@ -7,8 +7,9 @@ from DescricaoEmBrancoException import DescricaoEmBrancoException
 from ValorInvalidoException import ValorInvalidoException
 from Abastecimento import Abastecimento
 import time
-import mysql.connector
 
+import mysql.connector.locales.eng.client_error
+import mysql.connector
 
 class ControleDeVeiculos:
 
@@ -18,6 +19,7 @@ class ControleDeVeiculos:
             host="localhost",
             user="root",
             passwd="Samuel09",
+
             db="carrorama")
         self.mycursor = self.mydb.cursor()
 
@@ -83,7 +85,8 @@ class ControleDeVeiculos:
         print(veiculo, "\n")
 
         self.mydb.commit()
-        self.__del__()
+
+
 
 
 
