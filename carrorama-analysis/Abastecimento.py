@@ -3,16 +3,17 @@ from DescricaoEmBrancoException import DescricaoEmBrancoException
 from Despesa import Despesa
 from datetime import date
 from TipoDeDespesa import TipoDeDespesa
+from Combustivel import Combustiveis
 
 
 class Abastecimento(Despesa):
 
-    def __init__(self, combustivel=None, QuilometragemInicial=0, ValorDoLitro=0.0, IsTanqueCheio=bool,data=date, valor=0.0):
+    def __init__(self, combustivel=None, QuilometragemInicial=0, ValorDoLitro=0.0, IsTanqueCheio=0,data=date, valor=0.0):
         super().__init__(data.today(), TipoDeDespesa.Abastecimento, valor)
-        self.combustivel = combustivel
-        self.QuilometragemInicial = QuilometragemInicial
-        self.ValorDoLitro = ValorDoLitro
-        self. IsTanqueCheio = IsTanqueCheio
+        self._combustivel = combustivel
+        self._QuilometragemInicial = QuilometragemInicial
+        self._ValorDoLitro = ValorDoLitro
+        self._IsTanqueCheio = IsTanqueCheio
 
 
     @property
@@ -25,7 +26,7 @@ class Abastecimento(Despesa):
 
     @IsTanqueCheio.setter
     def IsTanqueCheio(self, valor):
-        self._IsTanqueCheio = valor
+        self._IsTanqueCheio = int(valor)
 
     @QuilometragemInicial.setter
     def QuilometragemInicial(self, valor):
@@ -62,4 +63,6 @@ class Abastecimento(Despesa):
     def combustivel(self, valor):
         self._combustivel = valor
 
-    def __str__(self): return "\nAbastecimento.\nValor: R$" + str(self.valor) + "\nCombustivel usado: " + self.combustivel.name + "\nValor do litro: R$ " + str(self.ValorDoLitro) + "\nQuilometragem:" + str(self.QuilometragemInicial) + "\nData: " + str(self.data) + "\n\n"
+    def __str__(self): return "\nAbastecimento.\nValor: R$" + str(self.valor) + "\nCombustivel usado: " + Combustiveis(self.combustivel).name + \
+                              "\nValor do litro: R$ " + str(self.ValorDoLitro) + "\nQuilometragem:" + str(self.QuilometragemInicial) + "\nData: " + \
+                              str(self.data) + "\n\n"

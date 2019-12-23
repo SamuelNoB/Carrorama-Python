@@ -1,5 +1,4 @@
 from Despesa import Despesa
-from TipoDeDespesa import TipoDeDespesa
 from datetime import date
 from ValorInvalidoException import ValorInvalidoException
 from DescricaoEmBrancoException import DescricaoEmBrancoException
@@ -7,8 +6,8 @@ from DescricaoEmBrancoException import DescricaoEmBrancoException
 
 class Manutencao(Despesa):
     def __init__(self, quilometragem=0, data=date, valor=0.0):
-        super().__init__(data, TipoDeDespesa.Manutencao, valor)
-        self.quilometragem = quilometragem
+        super().__init__(data, 3, valor)
+        self._quilometragem = quilometragem
 
     @property
     def quilometragem(self):

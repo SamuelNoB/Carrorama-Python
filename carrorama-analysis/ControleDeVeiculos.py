@@ -11,6 +11,7 @@ import time
 import mysql.connector.locales.eng.client_error
 import mysql.connector
 
+
 class ControleDeVeiculos:
 
     def __init__(self, veiculos=[]):
@@ -29,7 +30,6 @@ class ControleDeVeiculos:
 
     # -------------Registra veiculos----------------------------------------
     def registra_veiculo(self): # objeto do tipo Veiculo
-        self.__init__()
         sqlVeiculo = "INSERT INTO veiculo(modelo,marca,cor,placa,renavam,motor,ano)VALUES(%s, %s, %s, %s, %s, %s, %s)"
         sqlComb = "INSERT INTO combustiveis(combustivel,Veiculo_idVeiculo) VALUES(%s, %s)"
 
@@ -78,7 +78,6 @@ class ControleDeVeiculos:
             insertcombustivel = (combustivel.value, veiculo_id)
             self.mycursor.execute(sqlComb, insertcombustivel)
 
-
         self.veiculos.append(veiculo)
 
         print("sucesso\ninformações do veiculo registrado. ")
@@ -86,14 +85,10 @@ class ControleDeVeiculos:
 
         self.mydb.commit()
 
-
-
-
-
 # ----------------Registrar despesas-------------------------------------
-
     def registra_despesa(self):
-        if len(self.veiculos) == 0:
+
+        """if len(self.veiculos) == 0:
             print("Não há carros cadastrados para se vincular uma despesa a ele, por favor cadastre um carro primeiro.\n"
                   "voltando ao menu principal\n")
             time.sleep(3)
@@ -106,9 +101,30 @@ class ControleDeVeiculos:
         carro_escolhido = int(input()) - 1
 
         if carro_escolhido > len(self.veiculos):
-            raise ValorInvalidoException("Indice")
+            raise ValorInvalidoException("Indice")"""
 
-        while True:
+        veiculos_id = []
+        sql_despesa = "INSERT INTO despesa(categoria, valor, DATA, veiculo_idVeiculo) VALUES(%s, %s, %s, %s)"
+
+        req = "SELECT idVeiculo, modelo, marca, placa FROM veiculo"
+
+        while 1:
+            self.mycursor.execute(req)
+            for (idVeiculo, modelo, marca, placa) in self.mycursor:
+                veiculos_id.append(idVeiculo)
+                print("{})\t{} - {} - {}".format(idVeiculo, marca, modelo, placa))
+            carro_escolhido = int(input("\nSelecione o numero indicado do carro em que deseja cadastrar a despesa: "))
+
+            if self.bin_search(veiculos_id, carro_escolhido) == len(veiculos_id) or self.bin_search(veiculos_id, carro_escolhido) == -1:
+                print("Numero invalido. Por favor escolha um dos numeros impressos.\n")
+                time.sleep(2)
+            elif veiculos_id[self.bin_search(veiculos_id, carro_escolhido)] != carro_escolhido:
+                print("Numero invalido. Por favor escolha um dos numeros impressos.\n")
+                time.sleep(2)
+            else:
+                break
+
+        while True:  # ---------cadastra uma despesa comum------------------
             try:
 
                 categoria = int(input("digite o numero dacategoria de despesa que deseja adicionar\n(1) Imposto\n(2) Seguro\n(3) Manutenção\n"
@@ -122,30 +138,24 @@ class ControleDeVeiculos:
                 elif float(valor_despesa) < 0:
                     raise ValorInvalidoException("valor da despesa")
 
-                valor_despesa = float(valor_despesa)
+                if categoria == 6:  # ----------------Despesa de abastecimento-----------------------
 
-                if categoria == 6:
+                    sql_abastecimento = "INSERT INTO abastecimento(combustiveis, quilometragem_inicial, valor_do_litro, tanque_cheio, despesa_iddespesa) " \
+                                        "VALUES(%s, %s ,%s ,%s ,%s)"
 
                     abastecimento = Abastecimento()
                     abastecimento.categoria = 6
                     abastecimento.valor = valor_despesa
 
-                    if len(self.veiculos[carro_escolhido].combustiveis) > 1:
-                        print("Coloque o numero do combustivel usado no abastecimento.\n(1) " +
-                              self.veiculos[carro_escolhido].combustiveis[0].name + "\n(2) " + self.veiculos[carro_escolhido].combustiveis[1].name)
-                        Comb_abastecido = input()
+                    req = "SELECT combustivel FROM combustiveis WHERE Veiculo_idVeiculo = %s"
+                    entrada_req = (carro_escolhido, )
+                    self.mycursor.execute(req, entrada_req)
 
-                        if Comb_abastecido == '':
-                            raise DescricaoEmBrancoException("Combustivel abastecido")
-                        elif int(Comb_abastecido) > 2 or int(Comb_abastecido) < 1:
-                            raise ValorInvalidoException("Combustivel abastecido")
+                    for combustivel in self.mycursor:
+                        print("{})\t{}".format(combustivel[0], Combustiveis(combustivel[0]).name))
 
-                        Comb_abastecido = int(Comb_abastecido) - 1
-                        abastecimento.combustivel = self.veiculos[carro_escolhido].combustiveis[Comb_abastecido]
-                    else:
-                        abastecimento.combustivel = self.veiculos[carro_escolhido].combustiveis[0].value
-
-                    print(abastecimento.combustivel)
+                    combustivel = int(input("Selecione o numero correspondente ao tipo de combustivel usado no abastecimento: "))
+                    abastecimento.combustivel = Combustiveis(combustivel)
 
                     abastecimento.ValorDoLitro = input("Digite o valor do litro na hora do abastecimento: ")
 
@@ -159,38 +169,53 @@ class ControleDeVeiculos:
                         raise ValorInvalidoException("Tanque")
 
                     tanque = int(tanque)-1
+                    abastecimento.IsTanqueCheio = tanque
 
-                    if tanque == 0:
-                        abastecimento.IsTanqueCheio = False
-                    elif tanque == 1:
-                        abastecimento.IsTanqueCheio = True
+                    insert_despesa = (abastecimento.categoria, abastecimento.valor, abastecimento.data, carro_escolhido)
+                    self.mycursor.execute(sql_despesa, insert_despesa)
+                    id_despesa = self.mycursor.lastrowid
 
-                    self.veiculos[carro_escolhido].despesas.append(abastecimento)
+                    insert_abastecimento = (combustivel, abastecimento.QuilometragemInicial, abastecimento.ValorDoLitro, abastecimento.IsTanqueCheio, id_despesa)
+                    self.mycursor.execute(sql_abastecimento, insert_abastecimento)
+
                     print(abastecimento)
 
-                elif categoria == 3:
+                elif categoria == 3:  # ------------despesa de manutencao----------------
 
+                    sql_manutencao = "INSERT INTO manutencao(quilometragem, despesa_iddespesa) VALUES (%s, %s)"
                     manutencao = Manutencao()
                     manutencao.valor = valor_despesa
                     manutencao.quilometragem = input("Digite a quilometragem antes da manutenção: ")
 
-                    self.veiculos[carro_escolhido].despesas.append(manutencao)
                     print(manutencao)
 
-                else:
+                    insert_despesa = (categoria, valor_despesa, manutencao.data, carro_escolhido)
+                    self.mycursor.execute(sql_despesa, insert_despesa)
+                    despesa_id = self.mycursor.lastrowid
 
+                    insert_manutencao = (manutencao.quilometragem, despesa_id)
+                    self.mycursor.execute(sql_manutencao, insert_manutencao)
+
+                else: # ------------Registra uma despesa comum--------------------
                     despesa = Despesa()
                     despesa.categoria = TipoDeDespesa(categoria)
                     despesa.valor = valor_despesa
-                    self.veiculos[carro_escolhido].despesas.append(despesa)
+
+                    insert_despesa = (categoria, valor_despesa, despesa.data, carro_escolhido)
+                    self.mycursor.execute(sql_despesa, insert_despesa)
+
                     print(despesa)
+
+                self.mydb.commit()
                 break
+
             except(DescricaoEmBrancoException, ValorInvalidoException, ValueError):
                 print("Algum dos campos foi digitado erroneamente, por favor refaça o cadastro apertando ENTER, ou qualquer outra letra.")
                 print("Caso não queira digite 'n'.")
                 escolha = input()
                 if escolha == 'n': break
                 elif escolha == '' or escolha != 'n': pass
+
 
 
 # ------------------------------------funções para gerar relatorios---------------------------------------------------
@@ -213,3 +238,16 @@ class ControleDeVeiculos:
     # TODO implementar relatorio de custo
     def gerar_relatorio_custo(self):
         pass
+
+# -------------------------------------------Sub-rotinas------------------------------------
+
+    def bin_search(self, vetor, x):
+        e = -1
+        d = len(vetor)
+        while e < (d - 1):
+            m = int((e+d) / 2)
+            if vetor[m] < x:
+                e = m
+            else:
+                d = m
+        return d
