@@ -65,4 +65,4 @@ class Abastecimento(Despesa):
 
     def __str__(self): return "\nAbastecimento.\nValor: R$" + str(self.valor) + "\nCombustivel usado: " + Combustiveis(self.combustivel).name + \
                               "\nValor do litro: R$ " + str(self.ValorDoLitro) + "\nQuilometragem:" + str(self.QuilometragemInicial) + "\nData: " + \
-                              str(self.data) + "\n\n"
+                              str(self.data) + "\n"

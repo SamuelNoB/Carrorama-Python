@@ -25,5 +25,5 @@ class Manutencao(Despesa):
             raise ValorInvalidoException("Quilometragem")
         self._quilometragem = valor
 
-    def __str__(self): return "Despesa de manutenção...\nValor: R$" + str(self.valor) + "\nQuilometragem: " \
-                              + str(self.quilometragem) + "\nData: " + str(self.data)
+    def __str__(self): return "Manutenção\nValor: R$" + str(self.valor) + "\nQuilometragem: " \
+                              + str(self.quilometragem) + "\nData: " + str(self.data) + "\n"

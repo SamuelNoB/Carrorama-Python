@@ -33,4 +33,4 @@ class Despesa:
         self._categoria = valor
 
     def __str__(self):
-        return self.categoria.name + '\nValor: R$ ' + str(self.valor) + '\nData: ' + str(self.data) + "\n\n"
+        return TipoDeDespesa(self.categoria).name + '\nValor: R$ ' + str(self.valor) + '\nData: ' + str(self.data) + "\n"

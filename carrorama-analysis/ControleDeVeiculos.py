@@ -7,7 +7,6 @@ from DescricaoEmBrancoException import DescricaoEmBrancoException
 from ValorInvalidoException import ValorInvalidoException
 from Abastecimento import Abastecimento
 import time
-
 import mysql.connector.locales.eng.client_error
 import mysql.connector
 
@@ -20,7 +19,6 @@ class ControleDeVeiculos:
             host="localhost",
             user="root",
             passwd="Samuel09",
-
             db="carrorama")
         self.mycursor = self.mydb.cursor()
 
@@ -78,8 +76,6 @@ class ControleDeVeiculos:
             insertcombustivel = (combustivel.value, veiculo_id)
             self.mycursor.execute(sqlComb, insertcombustivel)
 
-        self.veiculos.append(veiculo)
-
         print("sucesso\ninformações do veiculo registrado. ")
         print(veiculo, "\n")
 
@@ -88,20 +84,7 @@ class ControleDeVeiculos:
 # ----------------Registrar despesas-------------------------------------
     def registra_despesa(self):
 
-        """if len(self.veiculos) == 0:
-            print("Não há carros cadastrados para se vincular uma despesa a ele, por favor cadastre um carro primeiro.\n"
-                  "voltando ao menu principal\n")
-            time.sleep(3)
-            return
 
-        print("Escolha o carro para o qual deseja adicionar a despesa\n")
-        for i, carro in enumerate(self.veiculos):
-            print(str(i+1), end=" - ")
-            print(carro)
-        carro_escolhido = int(input()) - 1
-
-        if carro_escolhido > len(self.veiculos):
-            raise ValorInvalidoException("Indice")"""
 
         veiculos_id = []
         sql_despesa = "INSERT INTO despesa(categoria, valor, DATA, veiculo_idVeiculo) VALUES(%s, %s, %s, %s)"
@@ -217,27 +200,28 @@ class ControleDeVeiculos:
                 elif escolha == '' or escolha != 'n': pass
 
 
-
 # ------------------------------------funções para gerar relatorios---------------------------------------------------
 
     def gerar_relatorio_simples(self):
-
+        self.get_registros()
         relatorio=[]
         relatorio.append("Relatório simples\n")
         for veiculo in self.veiculos:
             relatorio.append(veiculo.__str__() + "\n")
             for despesa in veiculo.despesas:
                 relatorio.append('\t' + despesa.__str__() + "\n")
-
+        self.veiculos = []
         return ''.join(relatorio)
+        
 
     # TODO implementar relatorio de consumo
     def gerar_relatorio_consumo(self):
-        pass
+        self.get_registros()
 
     # TODO implementar relatorio de custo
     def gerar_relatorio_custo(self):
         pass
+
 
 # -------------------------------------------Sub-rotinas------------------------------------
 
@@ -251,3 +235,59 @@ class ControleDeVeiculos:
             else:
                 d = m
         return d
+
+    def get_registros(self):
+        req_veiculo = "SELECT idVeiculo, marca, modelo, placa, cor, ano FROM Veiculo"
+
+        req_despesa = "SELECT categoria, valor, DATA FROM despesa WHERE (categoria != 6 AND categoria != 3) AND Veiculo_idVeiculo = %s"
+
+        req_manutencao = "SELECT d.categoria, d.valor, d.DATA, m.quilometragem FROM despesa d INNER JOIN manutencao m ON  m.despesa_iddespesa = d.iddespesa WHERE d.veiculo_idveiculo = %s"
+
+        req_abastecimento = "SELECT d.categoria, d.valor, d.DATA, a.combustiveis, a.quilometragem_inicial, a.valor_do_litro, a.tanque_cheio FROM despesa d INNER JOIN abastecimento a ON a.despesa_iddespesa = d.iddespesa WHERE d.veiculo_idveiculo = %s"
+
+        aux_cursor = self.mydb.cursor(buffered=True)
+        self.mycursor = self.mydb.cursor(buffered=True)
+        self.mycursor.execute(req_veiculo, )
+        for (idVeiculo, marca, modelo, placa, cor, ano) in self.mycursor:
+            veiculo_con = Veiculo()
+            veiculo_con.modelo = modelo
+            veiculo_con.marca = marca
+            veiculo_con.placa = placa
+            veiculo_con.cor = cor
+            veiculo_con.ano = ano
+            idV = (idVeiculo,)
+
+            aux_cursor.execute(req_despesa, idV)
+
+            for (categoria, valor, DATA) in aux_cursor:
+                despesa_con = Despesa()
+                despesa_con.valor = valor
+                despesa_con.categoria = categoria
+                despesa_con.data = DATA
+                veiculo_con.despesas.append(despesa_con)
+
+            aux_cursor.execute(req_manutencao, idV)
+            for (categoria, valor, DATA, quilometragem) in aux_cursor:
+                despesa_con = Manutencao()
+                despesa_con.valor = valor
+                despesa_con.categoria = categoria
+                despesa_con.data = DATA
+                despesa_con.quilometragem = quilometragem
+
+                veiculo_con.despesas.append(despesa_con)
+
+            aux_cursor.execute(req_abastecimento, idV)
+            for (categoria, valor, DATA, combustiveis, quilometragem_inicial, valor_do_litro, tanque_cheio) in aux_cursor:
+                despesa_con = Abastecimento()
+                despesa_con.valor = valor
+                despesa_con.categoria = categoria
+                despesa_con.data = DATA
+                despesa_con.combustivel = combustiveis
+                despesa_con.QuilometragemInicial = quilometragem_inicial
+                despesa_con.ValorDoLitro = valor_do_litro
+                despesa_con.IsTanqueCheio = tanque_cheio
+
+                veiculo_con.despesas.append(despesa_con)
+
+            self.veiculos.append(veiculo_con)
+            aux_cursor.close()
