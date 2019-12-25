@@ -9,7 +9,7 @@ from Abastecimento import Abastecimento
 import time
 import mysql.connector.locales.eng.client_error
 import mysql.connector
-
+import types
 
 class ControleDeVeiculos:
 
@@ -145,7 +145,7 @@ class ControleDeVeiculos:
                     quilometragem_inicial = input("Digite a quilometragem antes do abastecimento: ")
                     abastecimento.QuilometragemInicial = quilometragem_inicial
 
-                    tanque = input("informe se o abastecimento foi de tanque cheio ou não\n(1)Tanque cheio\n(2)normal\n")
+                    tanque = input("informe se o abastecimento foi de tanque cheio ou não\n(1)Normal\n(2)Tanque cheio\n")
                     if tanque == '':
                         raise DescricaoEmBrancoException("Tanque")
                     elif int(tanque) < 1 or int(tanque) > 2:
@@ -205,18 +205,38 @@ class ControleDeVeiculos:
     def gerar_relatorio_simples(self):
         self.get_registros()
         relatorio=[]
-        relatorio.append("Relatório simples\n")
+        relatorio.append("----------------Relatório simples-----------------\n\n")
         for veiculo in self.veiculos:
             relatorio.append(veiculo.__str__() + "\n")
             for despesa in veiculo.despesas:
                 relatorio.append('\t' + despesa.__str__() + "\n")
         self.veiculos = []
         return ''.join(relatorio)
-        
+
 
     # TODO implementar relatorio de consumo
     def gerar_relatorio_consumo(self):
         self.get_registros()
+        relatorio = []
+        relatorio.append("\tRelatorio de consumo")
+        for veiculo in self.veiculos:
+            for i, despesa in enumerate(veiculo.despesas):
+                ant = i-1
+
+                if isinstance(despesa, Abastecimento):
+                    if isinstance(veiculo.despesas[ant], Abastecimento):
+                        if despesa.IsTanqueCheio == 1 and veiculo.despesas[ant].IsTanqueCheio == 1:
+                            km_rodado = despesa.QuilometragemInicial - veiculo.despesas[ant].QuilometragemInicial
+                            litros_abastecidos = veiculo.despesas[ant].valor / veiculo.despesas[ant].ValorDoLitro
+                            comsumo_medio = km_rodado/litros_abastecidos
+                            relatorio.append("\nConsumo do veiculo: " + veiculo.__str__())
+                            relatorio.append(". E de " + str(round(comsumo_medio, 2)) + " km/l\n")
+
+        return ''.join(relatorio)
+
+
+
+
 
     # TODO implementar relatorio de custo
     def gerar_relatorio_custo(self):
@@ -245,10 +265,19 @@ class ControleDeVeiculos:
 
         req_abastecimento = "SELECT d.categoria, d.valor, d.DATA, a.combustiveis, a.quilometragem_inicial, a.valor_do_litro, a.tanque_cheio FROM despesa d INNER JOIN abastecimento a ON a.despesa_iddespesa = d.iddespesa WHERE d.veiculo_idveiculo = %s"
 
-        aux_cursor = self.mydb.cursor(buffered=True)
-        self.mycursor = self.mydb.cursor(buffered=True)
-        self.mycursor.execute(req_veiculo, )
-        for (idVeiculo, marca, modelo, placa, cor, ano) in self.mycursor:
+        connectdb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            passwd="Samuel09",
+            db="carrorama",
+            buffered="True"
+        )
+
+        aux_cursor = connectdb.cursor(buffered=True)
+        aux_cursor2 = connectdb.cursor(buffered=True)
+
+        aux_cursor2.execute(req_veiculo, )
+        for (idVeiculo, marca, modelo, placa, cor, ano) in aux_cursor2:
             veiculo_con = Veiculo()
             veiculo_con.modelo = modelo
             veiculo_con.marca = marca
@@ -290,4 +319,7 @@ class ControleDeVeiculos:
                 veiculo_con.despesas.append(despesa_con)
 
             self.veiculos.append(veiculo_con)
-            aux_cursor.close()
+
+        aux_cursor.close()
+        aux_cursor2.close()
+        connectdb.close()
