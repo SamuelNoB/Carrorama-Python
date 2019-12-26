@@ -9,7 +9,7 @@ from Abastecimento import Abastecimento
 import time
 import mysql.connector.locales.eng.client_error
 import mysql.connector
-import types
+
 
 class ControleDeVeiculos:
 
@@ -17,9 +17,10 @@ class ControleDeVeiculos:
         self.veiculos = veiculos
         self.mydb = mysql.connector.connect(
             host="localhost",
-            user="root",
-            passwd="Samuel09",
-            db="carrorama")
+            user="###", # insira seu usuario do SGBD aqui
+            passwd="###", # insira sua senha do SGBD aqui
+            db="carrorama",
+            )
         self.mycursor = self.mydb.cursor()
 
     def __del__(self):
@@ -27,9 +28,9 @@ class ControleDeVeiculos:
         self.mydb.close()
 
     # -------------Registra veiculos----------------------------------------
-    def registra_veiculo(self): # objeto do tipo Veiculo
-        sqlVeiculo = "INSERT INTO veiculo(modelo,marca,cor,placa,renavam,motor,ano)VALUES(%s, %s, %s, %s, %s, %s, %s)"
-        sqlComb = "INSERT INTO combustiveis(combustivel,Veiculo_idVeiculo) VALUES(%s, %s)"
+    def registra_veiculo(self):  # objeto do tipo Veiculo
+        sql_veiculo = "INSERT INTO veiculo(modelo,marca,cor,placa,renavam,motor,ano)VALUES(%s, %s, %s, %s, %s, %s, %s)"
+        sql_comb = "INSERT INTO combustiveis(combustivel,Veiculo_idVeiculo) VALUES(%s, %s)"
 
         while True:
             try:
@@ -43,18 +44,18 @@ class ControleDeVeiculos:
 
                 valor = int(input("qual seu tipo de carro?\n(1) para comum\n(2) para FLEX\n"))
                 if valor == 1:
-                    valor = int(input("escolha o tipo de combustivel de seu carro\n(1) para "+ Combustiveis.Gasolina.name +
-                                      "\n(2) para " + Combustiveis.Alccol.name + "\n(3) para "+ Combustiveis.Diesel.name+"\n"))
+                    valor = int(input("escolha o tipo de combustivel de seu carro\n(1) para " + Combustiveis.Gasolina.name +
+                                      "\n(2) para " + Combustiveis.Alccol.name + "\n(3) para " + Combustiveis.Diesel.name+"\n"))
                     veiculo.combustiveis = valor
                 elif valor == 2:
 
-                    combs = int(input("Escolha o primeiro tipo de combustivel de seu carro\n(1) para "+ Combustiveis.Gasolina.name +
-                                        "\n(2) para " + Combustiveis.Alccol.name + "\n(3) para "+ Combustiveis.Diesel.name + "\n"))
+                    combs = int(input("Escolha o primeiro tipo de combustivel de seu carro\n(1) para " + Combustiveis.Gasolina.name +
+                                      "\n(2) para " + Combustiveis.Alccol.name + "\n(3) para " + Combustiveis.Diesel.name + "\n"))
                     veiculo.combustiveis = combs
 
                     combs = int(input(
                         "Escolha o segundo tipo de combustivel de seu carro\n(1) para " + Combustiveis.Gasolina.name +
-                        "\n(2) para " + Combustiveis.Alccol.name + "\n(3) para " + Combustiveis.Diesel.name +"\n"))
+                        "\n(2) para " + Combustiveis.Alccol.name + "\n(3) para " + Combustiveis.Diesel.name + "\n"))
                     veiculo.combustiveis = combs
 
                     for combustivel in veiculo.combustiveis:
@@ -67,14 +68,14 @@ class ControleDeVeiculos:
             except(DescricaoEmBrancoException, ValorInvalidoException):
                 print("Um dos campos foi preenchido incorretamente, refaça o cadastro")
 
-        insertveiculo = (veiculo.modelo, veiculo.marca, veiculo.cor, veiculo.placa, veiculo.renavam,veiculo.motor, veiculo.ano)
+        insertveiculo = (veiculo.modelo, veiculo.marca, veiculo.cor, veiculo.placa, veiculo.renavam, veiculo.motor, veiculo.ano)
 
-        self.mycursor.execute(sqlVeiculo, insertveiculo)
+        self.mycursor.execute(sql_veiculo, insertveiculo)
         veiculo_id = self.mycursor.lastrowid
 
         for combustivel in veiculo.combustiveis:
             insertcombustivel = (combustivel.value, veiculo_id)
-            self.mycursor.execute(sqlComb, insertcombustivel)
+            self.mycursor.execute(sql_comb, insertcombustivel)
 
         print("sucesso\ninformações do veiculo registrado. ")
         print(veiculo, "\n")
@@ -83,8 +84,6 @@ class ControleDeVeiculos:
 
 # ----------------Registrar despesas-------------------------------------
     def registra_despesa(self):
-
-
 
         veiculos_id = []
         sql_despesa = "INSERT INTO despesa(categoria, valor, DATA, veiculo_idVeiculo) VALUES(%s, %s, %s, %s)"
@@ -158,7 +157,8 @@ class ControleDeVeiculos:
                     self.mycursor.execute(sql_despesa, insert_despesa)
                     id_despesa = self.mycursor.lastrowid
 
-                    insert_abastecimento = (combustivel, abastecimento.QuilometragemInicial, abastecimento.ValorDoLitro, abastecimento.IsTanqueCheio, id_despesa)
+                    insert_abastecimento = (combustivel, abastecimento.QuilometragemInicial,
+                                            abastecimento.ValorDoLitro, abastecimento.IsTanqueCheio, id_despesa)
                     self.mycursor.execute(sql_abastecimento, insert_abastecimento)
 
                     print(abastecimento)
@@ -179,7 +179,7 @@ class ControleDeVeiculos:
                     insert_manutencao = (manutencao.quilometragem, despesa_id)
                     self.mycursor.execute(sql_manutencao, insert_manutencao)
 
-                else: # ------------Registra uma despesa comum--------------------
+                else:  # ------------Registra uma despesa comum--------------------
                     despesa = Despesa()
                     despesa.categoria = TipoDeDespesa(categoria)
                     despesa.valor = valor_despesa
@@ -196,15 +196,16 @@ class ControleDeVeiculos:
                 print("Algum dos campos foi digitado erroneamente, por favor refaça o cadastro apertando ENTER, ou qualquer outra letra.")
                 print("Caso não queira digite 'n'.")
                 escolha = input()
-                if escolha == 'n': break
-                elif escolha == '' or escolha != 'n': pass
-
+                if escolha == 'n':
+                    break
+                elif escolha == '' or escolha != 'n':
+                    pass
 
 # ------------------------------------funções para gerar relatorios---------------------------------------------------
 
     def gerar_relatorio_simples(self):
         self.get_registros()
-        relatorio=[]
+        relatorio = list()
         relatorio.append("----------------Relatório simples-----------------\n\n")
         for veiculo in self.veiculos:
             relatorio.append(veiculo.__str__() + "\n")
@@ -213,10 +214,9 @@ class ControleDeVeiculos:
         self.veiculos = []
         return ''.join(relatorio)
 
-
     def gerar_relatorio_consumo(self):
         self.get_registros()
-        relatorio = []
+        relatorio = list()
         relatorio.append("\tRelatorio de consumo")
         for veiculo in self.veiculos:
             for i, despesa in enumerate(veiculo.despesas):
@@ -233,13 +233,9 @@ class ControleDeVeiculos:
 
         return ''.join(relatorio)
 
-
-
-
-
     def gerar_relatorio_custo(self):
         self.get_registros()
-        relatorio = []
+        relatorio = list()
         relatorio.append("\n\tRelatorio de custo\n")
         for veiculo in self.veiculos:
             valor_total_despesas = 0
@@ -262,7 +258,8 @@ class ControleDeVeiculos:
 
 # -------------------------------------------Sub-rotinas------------------------------------
 
-    def bin_search(self, vetor, x): # Realiza uma busca binaria em um vetor ordenado
+    @staticmethod
+    def bin_search(vetor, x):  # Realiza uma busca binaria em um vetor ordenado
 
         e = -1
         d = len(vetor)
@@ -285,8 +282,8 @@ class ControleDeVeiculos:
 
         connectdb = mysql.connector.connect(
             host="localhost",
-            user="root",
-            passwd="Samuel09",
+            user="###", # insira seu usuario do SGBD aqui
+            passwd="###", # insira sua senha do SGBD aqui
             db="carrorama",
             buffered="True"
         )
@@ -302,9 +299,9 @@ class ControleDeVeiculos:
             veiculo_con.placa = placa
             veiculo_con.cor = cor
             veiculo_con.ano = ano
-            idV = (idVeiculo,)
+            id_v = (idVeiculo,)
 
-            aux_cursor.execute(req_despesa, idV)
+            aux_cursor.execute(req_despesa, id_v)
 
             for (categoria, valor, DATA) in aux_cursor:
                 despesa_con = Despesa()
@@ -313,7 +310,7 @@ class ControleDeVeiculos:
                 despesa_con.data = DATA
                 veiculo_con.despesas.append(despesa_con)
 
-            aux_cursor.execute(req_manutencao, idV)
+            aux_cursor.execute(req_manutencao, id_v)
             for (categoria, valor, DATA, quilometragem) in aux_cursor:
                 despesa_con = Manutencao()
                 despesa_con.valor = valor
@@ -323,7 +320,7 @@ class ControleDeVeiculos:
 
                 veiculo_con.despesas.append(despesa_con)
 
-            aux_cursor.execute(req_abastecimento, idV)
+            aux_cursor.execute(req_abastecimento, id_v)
             for (categoria, valor, DATA, combustiveis, quilometragem_inicial, valor_do_litro, tanque_cheio) in aux_cursor:
                 despesa_con = Abastecimento()
                 despesa_con.valor = valor

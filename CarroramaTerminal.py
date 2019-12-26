@@ -4,27 +4,6 @@ import ControleDeVeiculos as CV
 import time
 import os
 
-# TODO criar um banco de dados
-"""
-carro = Veiculo()
-carro.marca = "FIAT"
-carro.modelo = "UNO"
-carro.placa = "JKD-1998"
-carro.ano = 2018
-carro.cor = "Azul"
-carro.renavam = "2586.870488-7"
-carro.motor = 1.0
-carro.combustiveis = [1,2]
-carro2 = Veiculo()
-carro2.marca = "chevrolet"
-carro2.modelo = "cobalt"
-carro2.placa = "JKD-1923"
-carro2.ano = 2014
-carro2.cor = "prata"
-carro2.renavam = "4914.315127-7"
-carro2.motor = 2.0
-carro2.combustiveis = [1]
-"""
 controle = CV.ControleDeVeiculos()
 
 print("Bem vindo ao controle de carros via terminal.")
@@ -56,4 +35,3 @@ while 1:
     elif escolha == 4: break
     else:
        input("Por favor escolha uma opção válida... Aperte enter para voltar ao inicio\n")
-
