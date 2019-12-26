@@ -214,7 +214,6 @@ class ControleDeVeiculos:
         return ''.join(relatorio)
 
 
-    # TODO implementar relatorio de consumo
     def gerar_relatorio_consumo(self):
         self.get_registros()
         relatorio = []
@@ -238,14 +237,33 @@ class ControleDeVeiculos:
 
 
 
-    # TODO implementar relatorio de custo
     def gerar_relatorio_custo(self):
-        pass
+        self.get_registros()
+        relatorio = []
+        relatorio.append("\n\tRelatorio de custo\n")
+        for veiculo in self.veiculos:
+            valor_total_despesas = 0
+            total_kms_rodados=0
+
+            for i, despesa in enumerate(veiculo.despesas):
+                if isinstance(despesa, Abastecimento):
+                    total_kms_rodados = despesa.QuilometragemInicial
+
+                valor_total_despesas += despesa.valor
+
+            if total_kms_rodados != 0:
+                relatorio.append(veiculo.__str__())
+                rel_despesa_kms = valor_total_despesas / total_kms_rodados
+
+                relatorio.append(" custo por km rodado: " + str(round(rel_despesa_kms, 2)) + " R$/km\n")
+
+        return ''.join(relatorio)
 
 
 # -------------------------------------------Sub-rotinas------------------------------------
 
-    def bin_search(self, vetor, x):
+    def bin_search(self, vetor, x): # Realiza uma busca binaria em um vetor ordenado
+
         e = -1
         d = len(vetor)
         while e < (d - 1):
@@ -256,7 +274,7 @@ class ControleDeVeiculos:
                 d = m
         return d
 
-    def get_registros(self):
+    def get_registros(self): # realiza diversas consultas para carregar os dados que estão no banco de dados para o programa
         req_veiculo = "SELECT idVeiculo, marca, modelo, placa, cor, ano FROM Veiculo"
 
         req_despesa = "SELECT categoria, valor, DATA FROM despesa WHERE (categoria != 6 AND categoria != 3) AND Veiculo_idVeiculo = %s"
