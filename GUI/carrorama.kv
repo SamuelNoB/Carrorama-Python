@@ -1,0 +1,109 @@
+#:kivy 1.11.1
+<TelaManager>:
+    
+    Screen1:
+        name: 'inicio'
+        id: screen1
+    Screen2:
+        name: 'cadastro_despesa'
+        id: screen2
+    Screen3:
+        name: 'gera_relatorio'
+        id: screen3
+    Screen4:
+        name: 'cadastro_veiculo'
+        id: screen4
+
+<Screen1>:
+    BoxLayout:
+        
+        orientation:'vertical'
+        spacing: '20dp'
+        padding: '10dp', '40dp'
+        Button:
+            text:'Cadastrar Veiculo'
+            font_size: '20sp'
+            on_release: root.manager.current = 'cadastro_veiculo'
+        Button:
+            text:'Cadastrar despesa'
+            font_size: '20sp'
+            on_release: root.manager.current = 'cadastro_despesa'
+        Button:
+            text:'Gerar relatorios'
+            font_size: '20sp'
+            on_release: root.manager.current = 'gera_relatorio'
+
+<Screen2>:
+    BoxLayout:
+        orientation: 'vertical'
+
+        spacing: '20dp'
+        padding: '10dp', '40dp'
+        Button:
+            text:'Voltar.'
+            on_release: root.manager.current = 'inicio'
+            font_size: '20sp'
+
+
+<Screen3>:
+    BoxLayout:
+        orientation: 'vertical'
+
+        spacing: '20dp'
+        padding: '10dp', '40dp'
+        Button:
+            text:'Voltar.'
+            on_release: root.manager.current = 'inicio'
+            font_size: '20sp'
+
+
+<Screen4>:
+    orientation: 'vertical'
+        
+    font_size: '20sp'
+
+    
+
+    BoxLayout:
+        orientation: 'vertical'
+        
+        font_size: '20sp'
+       
+        padding: '10dp', '40dp'
+        spacing: '10dp'
+
+        Label:
+            text: 'Digite a marca do veiculo.'
+            
+            text_size: self.size
+            halign: 'left'
+        TextInput:
+            id: marca
+            input_property: 'int'   
+
+        Label:
+            text: 'Digite a modelo do veiculo.'
+            text_size: self.size
+            halign: 'left'
+        TextInput:
+            id: modelo
+
+        Label:
+            text: 'Digite a cor do veiculo.'
+            text_size: self.size
+            halign: 'left'
+        TextInput:
+            id: cor
+            
+        GridLayout:
+            cols: 2
+            spacing: '5dp'
+            Button:
+                text:'Voltar.'
+                on_release: root.manager.current = 'inicio'
+            
+
+            Button:
+                text: 'Enviar.'
+                on_release: root.reg_veiculo()
+    

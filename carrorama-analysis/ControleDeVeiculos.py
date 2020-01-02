@@ -10,6 +10,9 @@ import time
 import mysql.connector.locales.eng.client_error
 import mysql.connector
 
+user = "root"
+passwd = "Samuel09"
+
 
 class ControleDeVeiculos:
 
@@ -17,8 +20,8 @@ class ControleDeVeiculos:
         self.veiculos = veiculos
         self.mydb = mysql.connector.connect(
             host="localhost",
-            user="###", # insira seu usuario do SGBD aqui
-            passwd="###", # insira sua senha do SGBD aqui
+            user=user,  # insira seu usuario do SGBD aqui
+            passwd=passwd,  # insira sua senha do SGBD aqui
             db="carrorama",
             )
         self.mycursor = self.mydb.cursor()
@@ -28,45 +31,27 @@ class ControleDeVeiculos:
         self.mydb.close()
 
     # -------------Registra veiculos----------------------------------------
-    def registra_veiculo(self):  # objeto do tipo Veiculo
+    def registra_veiculo(self, marca, modelo, cor, motor, combustivel1, combustivel2, ano, renavam, placa):  # objeto do tipo Veiculo
         sql_veiculo = "INSERT INTO veiculo(modelo,marca,cor,placa,renavam,motor,ano)VALUES(%s, %s, %s, %s, %s, %s, %s)"
         sql_comb = "INSERT INTO combustiveis(combustivel,Veiculo_idVeiculo) VALUES(%s, %s)"
 
-        while True:
-            try:
-                veiculo = Veiculo()
-                print(len(veiculo.combustiveis))
-                print(veiculo.marca)
-                veiculo.marca = input("Digite a marca do veículo: ")
-                veiculo.modelo = input("Digite o modelo: ")
-                veiculo.cor = input("Qual a cor do veículo? ")
-                veiculo.motor = input("qual o motor do Veiculo?\n EX: 1.0, 2.0\n")
+        veiculo = Veiculo()
+        try:
+            veiculo.marca = marca
+            veiculo.modelo = modelo
+            veiculo.cor = cor
+            veiculo.motor = motor
 
-                valor = int(input("qual seu tipo de carro?\n(1) para comum\n(2) para FLEX\n"))
-                if valor == 1:
-                    valor = int(input("escolha o tipo de combustivel de seu carro\n(1) para " + Combustiveis.Gasolina.name +
-                                      "\n(2) para " + Combustiveis.Alccol.name + "\n(3) para " + Combustiveis.Diesel.name+"\n"))
-                    veiculo.combustiveis = valor
-                elif valor == 2:
+            veiculo.combustiveis = combustivel1
+            if combustivel2 != '':
+                veiculo.combustiveis = combustivel2
 
-                    combs = int(input("Escolha o primeiro tipo de combustivel de seu carro\n(1) para " + Combustiveis.Gasolina.name +
-                                      "\n(2) para " + Combustiveis.Alccol.name + "\n(3) para " + Combustiveis.Diesel.name + "\n"))
-                    veiculo.combustiveis = combs
+            veiculo.ano = ano
+            veiculo.renavam = renavam
+            veiculo.placa = placa
 
-                    combs = int(input(
-                        "Escolha o segundo tipo de combustivel de seu carro\n(1) para " + Combustiveis.Gasolina.name +
-                        "\n(2) para " + Combustiveis.Alccol.name + "\n(3) para " + Combustiveis.Diesel.name + "\n"))
-                    veiculo.combustiveis = combs
-
-                    for combustivel in veiculo.combustiveis:
-                        print(combustivel.value)
-
-                veiculo.ano = input("Digite o ano de fabricação do veículo: ")
-                veiculo.renavam = input("Digite o renavam do veiculo seguindo o seguinte modelo.\nEX: 1234.123456-9\n")
-                veiculo.placa = input("Digite a placa no deguinte modelo.\n EX: JKD-1987")
-                break
-            except(DescricaoEmBrancoException, ValorInvalidoException):
-                print("Um dos campos foi preenchido incorretamente, refaça o cadastro")
+        except(DescricaoEmBrancoException, ValorInvalidoException):
+            print("Um dos campos foi preenchido incorretamente, refaça o cadastro")
 
         insertveiculo = (veiculo.modelo, veiculo.marca, veiculo.cor, veiculo.placa, veiculo.renavam, veiculo.motor, veiculo.ano)
 
@@ -77,10 +62,8 @@ class ControleDeVeiculos:
             insertcombustivel = (combustivel.value, veiculo_id)
             self.mycursor.execute(sql_comb, insertcombustivel)
 
-        print("sucesso\ninformações do veiculo registrado. ")
-        print(veiculo, "\n")
-
         self.mydb.commit()
+        return veiculo.__str__()
 
 # ----------------Registrar despesas-------------------------------------
     def registra_despesa(self):
@@ -282,8 +265,8 @@ class ControleDeVeiculos:
 
         connectdb = mysql.connector.connect(
             host="localhost",
-            user="###", # insira seu usuario do SGBD aqui
-            passwd="###", # insira sua senha do SGBD aqui
+            user=user,  # insira seu usuario do SGBD aqui
+            passwd=passwd,  # insira sua senha do SGBD aqui
             db="carrorama",
             buffered="True"
         )

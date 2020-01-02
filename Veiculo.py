@@ -125,10 +125,10 @@ class Veiculo:
     def combustiveis(self, valor):
         if valor is None:
             raise DescricaoEmBrancoException("Combustiveis")
-        if valor < 1 or valor > 3:
+        if int(valor) < 1 or int(valor) > 3:
             raise ValorInvalidoException("Combustiveis")
         else:
-            self._combustiveis.append(Combustiveis(valor))
+            self._combustiveis.append(Combustiveis(int(valor)))
 
     def __str__(self):
         return self.marca + ' ' + self.modelo + ' ' + self.cor + ' ' + str(self.ano) + ' - ' + self.placa
